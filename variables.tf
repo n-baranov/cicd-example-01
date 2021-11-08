@@ -1,5 +1,6 @@
 variable "region" {
-  type = string
+  type    = string
+  default = "eu-west-3"
 }
 
 variable "repository_list" {
