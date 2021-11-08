@@ -10,8 +10,8 @@ resource "docker_registry_image" "docker_image" {
   name     = "${aws_ecr_repository.repository[each.key].repository_url}:latest"
 
   build {
-    context    = "../application_folder"
-    dockerfile = "${each.key}.Dockerfile"
+    context    = "docker/"
+    dockerfile = "${each.key}.dockerfile"
   }
 }
 
@@ -86,7 +86,6 @@ resource "aws_security_group_rule" "default" {
   ]
 }
 
-/*
 #create iam role for cluster
 resource "aws_iam_role" "eks_cluster" {
   name               = "eks-cluster"
@@ -200,7 +199,7 @@ resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
     aws_iam_role.eks_nodes,
   ]
 }
-*/
+
 
 #create EKS cluster
 resource "aws_eks_cluster" "aws_eks" {
@@ -217,8 +216,8 @@ resource "aws_eks_cluster" "aws_eks" {
   }
 
   depends_on = [
-    #    aws_iam_role_policy_attachment.AmazonEKSClusterPolicy,
-    #    aws_iam_role_policy_attachment.AmazonEKSServicePolicy,
+    # aws_iam_role_policy_attachment.AmazonEKSClusterPolicy,
+    # aws_iam_role_policy_attachment.AmazonEKSServicePolicy,
     aws_subnet.subnets,
   ]
 }
@@ -227,7 +226,7 @@ resource "aws_eks_cluster" "aws_eks" {
 resource "aws_eks_node_group" "node" {
   cluster_name    = aws_eks_cluster.aws_eks.name
   node_group_name = "nodes_laravel"
-  #node_role_arn  = aws_iam_role.eks_nodes.arn
+  #node_role_arn   = aws_iam_role.eks_nodes.arn
   node_role_arn  = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/myTerraformEKSRole"
   subnet_ids     = data.aws_subnet_ids.id.ids
   instance_types = ["t2.medium"]
@@ -242,9 +241,9 @@ resource "aws_eks_node_group" "node" {
   }
 
   depends_on = [
-    #    aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy,
-    #    aws_iam_role_policy_attachment.AmazonEKS_CNI_Policy,
-    #    aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
+    # aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy,
+    # aws_iam_role_policy_attachment.AmazonEKS_CNI_Policy,
+    # aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
     aws_eks_cluster.aws_eks,
   ]
 }

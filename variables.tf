@@ -42,6 +42,11 @@ variable "map_roles" {
     groups   = list(string)
   }))
   default = [
+    {
+      rolearn  = "arn:aws:iam::855659683173:role/myTerraformEKSRole"
+      username = "myTerraformEKSRole"
+      groups   = ["system:masters"]
+    }
   ]
 }
 
@@ -53,13 +58,13 @@ variable "map_users" {
     groups   = list(string)
   }))
   default = [
-    #    {
-    #      userarn  = "arn:aws:iam::${data.aws_caller_identity.current.id}:user/Terraform"
-    #      username = "Terraform"
-    #      groups   = ["system:masters"]
-    #    },
     {
-      userarn  = "arn:aws:iam::855659683173:user/root"
+      userarn  = "arn:aws:iam::855659683173:user/Terraform"
+      username = "Terraform"
+      groups   = ["system:masters"]
+    },
+    {
+      userarn  = "arn:aws:iam::855659683173:root"
       username = "Root"
       groups   = ["system:masters"]
     }
