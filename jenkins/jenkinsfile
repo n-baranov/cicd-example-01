@@ -24,7 +24,7 @@ pipeline {
              then
                 echo "Bucket %S3_BUCKET_NAME% doesn't exist. Creating it..."
                 aws s3 mb s3://%S3_BUCKET_NAME% --region=eu-west-3
-             sleep 10
+             sleep 5
              exit
              fi
             """
@@ -62,7 +62,19 @@ pipeline {
                 sh """aws eks --region eu-west-3 update-kubeconfig --name eks_cluster_laravel"""
                 sh """kubectl apply -f cicd-example-01/manifest.yaml"""
                 sh """kubectl get svc laravel-lb"""
-                sh """bash -c 'external_ip=""; while [ -z %external_ip% ]; do echo "Waiting for end point..."; external_ip=%(kubectl get svc laravel-lb --template="{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}")%; [ -z "%external_ip%" ] && sleep 10; done; echo "End point ready-" && echo %external_ip%; export LARAVEL_ENDPOINT=%external_ip%'"""
+                sh """cat <<EOF> get-external-ip.sh
+                      #!/bin/bash
+                      external_ip=""
+                      while [ -z %external_ip% ]
+                      do
+                        echo "Waiting for end point..."
+                        external_ip=%(kubectl get svc laravel-lb --template="{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}")% [ -z "%external_ip%" ]
+                        sleep 10
+                      done
+                   """
+                sh """bash get-external-ip.sh"""
+                sh """echo "End point ready-" && echo %external_ip%"""
+                sh """export LARAVEL_ENDPOINT=%external_ip%'"""
               }
             }
           }
@@ -82,7 +94,7 @@ pipeline {
               }
             }
 
-            stage('05-10-minute-hold') {
+            stage('05-2-minutes-hold') {
               steps {
                     sh """sleep 120"""
                 }
