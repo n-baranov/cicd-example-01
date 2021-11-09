@@ -39,7 +39,7 @@ pipeline {
             $class: 'AmazonWebServicesCredentialsBinding',
             accessKeyVariable: 'AWS_ACCESS_KEY_ID',
             secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
-            credentialsId: 'Jenkins-AWS'
+            credentialsId: 'jenkins-AWS'
             ]])
             {
               sh """if [ -d cicd-example-01 ]; then rm -Rf cicd-example-01; fi"""
@@ -54,7 +54,7 @@ pipeline {
               $class: 'AmazonWebServicesCredentialsBinding',
               accessKeyVariable: 'AWS_ACCESS_KEY_ID',
               secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
-              credentialsId: 'Jenkins-AWS'
+              credentialsId: 'jenkins-AWS'
               ]])
               {
                 sh """cd cicd-example-01/ && terraform init"""
@@ -94,7 +94,7 @@ pipeline {
                 $class: 'AmazonWebServicesCredentialsBinding',
                 accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                 secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
-                credentialsId: 'Jenkins-AWS'
+                credentialsId: 'jenkins-AWS'
                 ]])
                 {
                   sh """aws eks --region eu-west-3 update-kubeconfig --name eks_cluster_laravel"""
@@ -109,7 +109,7 @@ pipeline {
                   $class: 'AmazonWebServicesCredentialsBinding',
                   accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                   secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
-                  credentialsId: 'Jenkins-AWS'
+                  credentialsId: 'jenkins-AWS'
                   ]])
                   {
                     sh """cd cicd-example-01/ && terraform destroy --auto-approve"""
