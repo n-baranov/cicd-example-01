@@ -62,7 +62,7 @@ pipeline {
                 sh """aws eks --region eu-west-3 update-kubeconfig --name eks_cluster_laravel"""
                 sh """kubectl apply -f cicd-example-01/manifest.yaml"""
                 sh """kubectl get svc laravel-lb"""
-                sh """bash -c 'external_ip=""; while [ -z $external_ip ]; do echo "Waiting for end point..."; external_ip=$(kubectl get svc laravel-lb --template="{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}"); [ -z "$external_ip" ] && sleep 10; done; echo "End point ready-" && echo $external_ip; export LARAVEL_ENDPOINT=$external_ip'"""
+                sh """bash -c 'external_ip=""; while [ -z %external_ip% ]; do echo "Waiting for end point..."; external_ip=%(kubectl get svc laravel-lb --template="{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}")%; [ -z "$external_ip" ] && sleep 10; done; echo "End point ready-" && echo $external_ip; export LARAVEL_ENDPOINT=$external_ip'"""
               }
             }
           }
