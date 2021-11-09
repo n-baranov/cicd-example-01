@@ -1,15 +1,17 @@
 #!/bin/bash
-wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+apt-get install wget -y
+wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | apt-key add -
 sh -c 'echo deb https://pkg.jenkins.io/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
 apt-get update
 apt install openjdk-11-jdk -y
 apt-get install jenkins -y
 apt install openssh-server -y
+apt-get install ufw
 ufw allow 8080
 ufw allow OpenSSH
 ufw enable
 
-apt-get install awscli -yaws
+apt-get install awscli -y
 
 apt-get install \
     apt-transport-https \
@@ -17,10 +19,10 @@ apt-get install \
     curl \
     gnupg \
     lsb-release -y
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 apt-get update -y
 apt-get install docker-ce docker-ce-cli containerd.io -y
 usermod -aG docker jenkins
