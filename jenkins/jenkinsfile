@@ -71,7 +71,7 @@ pipeline {
 
           stage('04-Healthcheck') {
               environment {
-                  LARAVEL_ENDPOINT1 = sh(script: 'aws eks --region eu-west-3 update-kubeconfig --name eks_cluster_laravel \
+                  LARAVEL_ENDPOINT1 = sh(script: 'aws eks --region eu-west-3 update-kubeconfig --name eks_cluster_laravel
                   kubectl get services laravel-lb --output jsonpath="{.status.loadBalancer.ingress[0].hostname}"', , returnStdout: true).trim()
               }
               steps {
