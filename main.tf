@@ -52,8 +52,6 @@ resource "aws_subnet" "subnets" {
   ]
 }
 
-
-
 #Create routing table with IG routing
 /*
 resource "aws_route_table" "public" {
@@ -152,7 +150,6 @@ resource "aws_iam_role_policy" "eks-AccessKubernetesApi" {
   ]
 }
 
-
 #create iam role for nodes
 resource "aws_iam_role" "eks_nodes" {
   name               = "eks-node-group"
@@ -200,12 +197,11 @@ resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
   ]
 }
 
-
 #create EKS cluster
 resource "aws_eks_cluster" "aws_eks" {
-  name = "eks_cluster_laravel"
-  #role_arn = aws_iam_role.eks_cluster.arn
-  role_arn = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/myTerraformEKSRole"
+  name     = "eks_cluster_laravel"
+  role_arn = aws_iam_role.eks_cluster.arn
+  #role_arn = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/myTerraformEKSRole"
 
   vpc_config {
     subnet_ids = data.aws_subnet_ids.id.ids
@@ -216,8 +212,8 @@ resource "aws_eks_cluster" "aws_eks" {
   }
 
   depends_on = [
-    # aws_iam_role_policy_attachment.AmazonEKSClusterPolicy,
-    # aws_iam_role_policy_attachment.AmazonEKSServicePolicy,
+    aws_iam_role_policy_attachment.AmazonEKSClusterPolicy,
+    aws_iam_role_policy_attachment.AmazonEKSServicePolicy,
     aws_subnet.subnets,
   ]
 }
@@ -226,8 +222,8 @@ resource "aws_eks_cluster" "aws_eks" {
 resource "aws_eks_node_group" "node" {
   cluster_name    = aws_eks_cluster.aws_eks.name
   node_group_name = "nodes_laravel"
-  #node_role_arn   = aws_iam_role.eks_nodes.arn
-  node_role_arn  = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/myTerraformEKSRole"
+  node_role_arn   = aws_iam_role.eks_nodes.arn
+  #node_role_arn  = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/myTerraformEKSRole"
   subnet_ids     = data.aws_subnet_ids.id.ids
   instance_types = ["t2.medium"]
   tags = {
@@ -241,9 +237,9 @@ resource "aws_eks_node_group" "node" {
   }
 
   depends_on = [
-    # aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy,
-    # aws_iam_role_policy_attachment.AmazonEKS_CNI_Policy,
-    # aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
+    aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy,
+    aws_iam_role_policy_attachment.AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
     aws_eks_cluster.aws_eks,
   ]
 }
@@ -253,19 +249,7 @@ resource "kubernetes_config_map" "aws_auth" {
   metadata {
     name      = "aws-auth"
     namespace = "kube-system"
-    /*
-    labels = merge(
-      {
-        "app.kubernetes.io/managed-by" = "Terraform"
-        # / are replaced by . because label validator fails in this lib
-        # https://github.com/kubernetes/apimachinery/blob/1bdd76d09076d4dc0362456e59c8f551f5f24a72/pkg/util/validation/validation.go#L166
-        "terraform.io/module" = "terraform-aws-modules.eks.aws"
-      },
-      var.aws_auth_additional_labels
-    )
-    */
   }
-
   data = {
     mapRoles    = yamlencode(var.map_roles)
     mapUsers    = yamlencode(var.map_users)
@@ -280,7 +264,6 @@ resource "kubernetes_cluster_role" "example" {
   metadata {
     name = "eks-console-dashboard-full-access-group"
   }
-
   rule {
     api_groups = ["rbac.authorization.k8s.io"]
     resources  = ["namespaces", "pods"]
