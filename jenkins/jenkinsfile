@@ -96,9 +96,11 @@ pipeline {
               steps {
                     echo "------------ Destruction will be started in 120 seconds ------------"
                     sleep 1
+                    script{
                     for (int i = 119; i > 0; i--) {
                         sh """echo ${list[i]}"""
                         sleep 1
+                        }
                     }
                 }
               }
