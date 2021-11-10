@@ -29,7 +29,7 @@ I've been deliberately avoiding using existing Terraform modules in this one. Ju
 
 The sequence of creating and configuring your Jenkins host-machine/GitHub:
 - launch an Ubuntu Server 20.04 LTS with a user data from /aws-ubuntu-bootstrap/script.sh;
-- run <ip>:8080 and a console simultaneously;
+- run <jenkins_ip>:8080 and a console simultaneously;
 - unlock your Jenkins GUI with the console token ($ sudo cat /var/lib/jenkins/secrets/initialAdminPassword);
 - configure Jenkins with default plugins;
 - install CloudBees AWS Credential plugin;
@@ -39,7 +39,7 @@ The sequence of creating and configuring your Jenkins host-machine/GitHub:
 - copy id_rsa token into your "jenkins-git" credentials (type=SSH Username with private key);
 - $ sudo usermod -aG docker jenkins (for some reason this command has no effect during bootstraping);
 - $ sudo service jenkins restart;
-- in Jenkins GUI: "Build new item" -> "Pipeline" -> check "GitHub project", url=git@github.com:<your_id>/<your_project>.git/ -> check "GitHub hook trigger for GITScm polling" -> Pipeline script from SCM -> Git -> git@github.com:<your_id>/<your_project>.git -> add "jenkins-git" credentials -> branch: */main -> Script Path: jenkins/jenkinsfile;
+- in Jenkins GUI: "Build new item" -> "Pipeline" -> check "GitHub project", git@github.com:<your_id>/<your_project>.git/ -> check "GitHub hook trigger for GITScm polling" -> Pipeline script from SCM -> Git -> git@github.com:<your_id>/<your_project>.git -> add "jenkins-git" credentials -> branch: */main -> Script Path: jenkins/jenkinsfile;
 - add webhook in your GitHub GUI -> Project Settings -> Webhooks -> http://<ip>:8080/github-webhook/ -> application/json;
 
 Made by Nikita Baranov (nikita.baranov.devops@gmail.com)
