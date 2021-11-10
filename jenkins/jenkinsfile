@@ -69,10 +69,15 @@ pipeline {
           }
 
           stage('04-Healthcheck') {
-            steps {
-                    sh """sleep 30"""
-                    sh """
-                    if curl "%LARAVEL_ENDPOINT%" 2>&1 | grep -q 'Laravel'
+              environment {
+                  LARAVEL_ENDPOINT1 = sh(script: 'kubectl get services laravel-lb --output jsonpath='{.status.loadBalancer.ingress[0].hostname}'', , returnStdout: true).trim()
+              }
+              steps {
+                    echo "${env.LARAVEL_ENDPOINT1}"
+                    sh """echo \$LARAVEL_ENDPOINT1
+                    cat <<EOF> healthcheck.sh
+                    #!/bin/bash
+                    if curl \$LARAVEL_ENDPOINT1 2>&1 | grep -q '<html><head>'
                     then
                        echo "Deployment is ok"
                     else
@@ -80,6 +85,7 @@ pipeline {
                     exit
                     fi
                     """
+                    sh """bash healthcheck.sh"""
               }
             }
 
