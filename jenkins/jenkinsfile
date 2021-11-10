@@ -94,16 +94,16 @@ pipeline {
 
             stage('05-2-minutes-hold') {
               steps {
-                    echo "------------ Destruction will be started in 120 seconds ------------"
-                    sleep 1
-                    script{
-                    for (int i = 119; i > 0; i--) {
-                        sh """echo ${list[i]}"""
-                        sleep 1
-                        }
-                    }
+                echo "------------ Destruction will be started in 120 seconds ------------"
+                sleep 1
+                script {
+                   for (int i = 119; i > 0; i--) {
+                      echo "${i}"
+                      sh """sleep 1 1>&1"""
+                      }
                 }
               }
+            }
 
           stage('06-Login-And-Delete-K8s-Deployment-HPA-LB') {
             steps {
