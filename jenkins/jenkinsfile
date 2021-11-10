@@ -82,7 +82,7 @@ pipeline {
                     sh """export LARAVEL_ENDPOINT=`kubectl get services laravel-lb --output jsonpath='{.status.loadBalancer.ingress[0].hostname}'`
                     cat <<EOF> healthcheck.sh
                     #!/bin/bash
-                    if curl "%LARAVEL_ENDPOINT%" 2>&1 | grep -q '<html><head>'
+                    if curl \$LARAVEL_ENDPOINT | grep -q '<html><head>'
                     then
                        echo "Deployment is ok"
                     else
