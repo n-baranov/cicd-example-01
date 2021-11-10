@@ -71,16 +71,16 @@ pipeline {
 
           stage('04-Healthcheck') {
               environment {
-                  TEMP_VAR = sh(script: 'aws eks --region eu-west-3 update-kubeconfig --name eks_cluster_laravel')
-                  LARAVEL_ENDPOINT1 = sh(script: 'kubectl get services laravel-lb --output jsonpath="{.status.loadBalancer.ingress[0].hostname}"', , returnStdout: true).trim()
-              }
-              steps {
               withCredentials([[
                 $class: 'AmazonWebServicesCredentialsBinding',
                 accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                 secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
                 credentialsId: 'jenkins-AWS'
                 ]])
+                  TEMP_VAR = sh(script: 'aws eks --region eu-west-3 update-kubeconfig --name eks_cluster_laravel')
+                  LARAVEL_ENDPOINT1 = sh(script: 'kubectl get services laravel-lb --output jsonpath="{.status.loadBalancer.ingress[0].hostname}"', , returnStdout: true).trim()
+              }
+              steps {
                     echo "${env.LARAVEL_ENDPOINT1}"
                     sh """echo \$LARAVEL_ENDPOINT1
                     cat <<EOF> healthcheck.sh
