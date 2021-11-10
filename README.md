@@ -29,7 +29,7 @@ I've been deliberately avoiding using existing Terraform modules in this one. Ju
 
 The sequence of creating and configuring your Jenkins host-machine/GitHub:
 - launch an Ubuntu Server 20.04 LTS with a user data from /aws-ubuntu-bootstrap/script.sh;
-- run <ip>:8080 and a console simultaneously;
+- run <jenkins_ip>:8080 and a console simultaneously;
 - unlock your Jenkins GUI with the console token ($ sudo cat /var/lib/jenkins/secrets/initialAdminPassword);
 - configure Jenkins with default plugins;
 - install CloudBees AWS Credential plugin;
