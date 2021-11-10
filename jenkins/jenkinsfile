@@ -95,14 +95,11 @@ pipeline {
             stage('05-2-minutes-hold') {
               steps {
                     echo "------------ Destruction will be started in 120 seconds ------------"
-                    sh """
-                    def max=119
-                    for i in {$max..0}
-                    do
-                        echo "$i"
+                    sleep 1
+                    for (int i = 119; i > 0; i--) {
+                        sh """echo ${list[i]}"""
                         sleep 1
-                    done
-                    """
+                    }
                 }
               }
 
