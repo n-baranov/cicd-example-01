@@ -96,7 +96,7 @@ pipeline {
               steps {
                     echo "------------ Destruction will be started in 120 seconds ------------"
                     sh """
-                    max=119
+                    def max=119
                     for i in {$max..0}
                     do
                         echo "$i"
