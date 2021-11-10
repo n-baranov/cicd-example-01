@@ -70,7 +70,7 @@ pipeline {
 
           stage('04-Healthcheck') {
               environment {
-                  LARAVEL_ENDPOINT1 = sh(script: 'kubectl get services laravel-lb --output jsonpath='{.status.loadBalancer.ingress[0].hostname}'', , returnStdout: true).trim()
+                  LARAVEL_ENDPOINT1 = sh(script: 'kubectl get services laravel-lb --output jsonpath="{.status.loadBalancer.ingress[0].hostname}"', , returnStdout: true).trim()
               }
               steps {
                     echo "${env.LARAVEL_ENDPOINT1}"
