@@ -1,12 +1,12 @@
 This is an example of a CI/CD deployment of a web server using:
 
-GitHub, Jenkins, Terraform, Docker, Kubernetes (K8s), AWS, Laravel PHP.
+GitHub, Ansible, Jenkins, Terraform, Docker, Kubernetes (K8s), AWS, Laravel PHP.
 In the beginning we have:
 - a host machine;
 - Developers' Git repository;
 - CI/CD Git repository.
 
-The host-machine with Jenkins (an Amazon EC2 instance created manually with a bootstrap file) is always running and listening for a webhook from Developers' GitHub. The webhook event (means that a "push" command were executed in Developers' Git repository) starts a jenkins pipeline from a Jenkinsfile in CI/CD Git repository.
+The host-machine with Jenkins is an Amazon EC2 instance created manually with "aws-ubuntu-bootstrap/script.sh" bootstrap file or by executing an "ansible/ec2-playbook.yaml" from CI/CD Git repository. It is always running and listening for a webhook from Developers' GitHub. The webhook event (means that a "push" command were executed in Developers' Git repository) starts a Jenkins pipeline from "jenkins/jenkinsfile" in CI/CD Git repository.
 
 The Jenkins pipeline:
 - creates (if it doean't exist yet) an AWS S3 Bucket for our Terraform .tfstate file;
