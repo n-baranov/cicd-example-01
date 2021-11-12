@@ -1,0 +1,69 @@
+---
+
+
+- name: Create AWS EC2 Instance
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+   keypair: nikitabaranov-key-paris               # Key Pair name as written in AWS Console
+   instance_type: t2.medium                       # Type of EC2
+   image: ami-06d79c60d7454e2af                   # AMI in this region
+   region: eu-west-3
+   count: 1
+   security_group: cicd-SG
+
+  tasks:
+   - set_fact: aws_access_key="{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
+   - set_fact: aws_secret_key="{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+   - set_fact: user_data="{{ lookup('file','../aws-ubuntu-bootstrap/script.sh') }}"
+
+   - name: Create a security group with Ports 22, 80, 443, 8080 opened for 0.0.0.0/0
+     ec2_group:
+      name: "{{ security_group }}"
+      description: Create a security group with Ports 22, 80, 443, 8080 opened for 0.0.0.0/0
+      region: "{{ region }}"
+      rules:
+       - proto: tcp
+         from_port: 22
+         to_port: 22
+         cidr_ip: 0.0.0.0/0
+       - proto: tcp
+         from_port: 80
+         to_port: 80
+         cidr_ip: 0.0.0.0/0
+       - proto: tcp
+         from_port: 443
+         to_port: 443
+         cidr_ip: 0.0.0.0/0
+       - proto: tcp
+         from_port: 8080
+         to_port: 8080
+         cidr_ip: 0.0.0.0/0
+      rules_egress:
+       - proto: all
+         cidr_ip: 0.0.0.0/0
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+     register: results
+     ignore_errors: yes
+
+   - name: Create new EC2 server
+     ec2:
+      key_name: "{{ keypair }}"
+      instance_type: "{{ instance_type }}"
+      image: "{{ image }}"
+      group: "{{ security_group }}"
+      region:  "{{ region }}"
+      user_data: "{{ user_data }}"
+      instance_tags:
+         Name: Jenk
+      count: "{{ count }}"
+      wait: true
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+     register: ec2        # Start EC2 Instance Creation
+     ignore_errors: yes
+
+   - name: Print all ec2 vars
+     debug: var=ec2
