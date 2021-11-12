@@ -6,11 +6,11 @@ In the beginning we have:
 - Developers' Git repository;
 - CI/CD Git repository.
 
-The host-machine with Jenkins is an Amazon EC2 instance created manually with "aws-ubuntu-bootstrap/script.sh" bootstrap file or by executing an "ansible/ec2-playbook.yaml" from CI/CD Git repository. It is always running and listening for a webhook from Developers' GitHub. The webhook event (means that a "push" command were executed in Developers' Git repository) starts a Jenkins pipeline from "jenkins/jenkinsfile" in CI/CD Git repository.
+The host-machine with Jenkins is an Amazon EC2 instance created manually with the "aws-ubuntu-bootstrap/script.sh" bootstrap file or by executing the "ansible/ec2-playbook.yaml" from the CI/CD Git repository. It is always running and listening for a webhook from Developers' GitHub. The webhook event (means that a "push" command were executed in the Developers' Git repository) starts a Jenkins pipeline from "jenkins/jenkinsfile" in the CI/CD Git repository.
 
 The Jenkins pipeline:
 - creates (if it doean't exist yet) an AWS S3 Bucket for our Terraform .tfstate file;
-- pulls project from CI/CD GitHub;
+- pulls project from our CI/CD GitHub;
 - runs a Terraform project;
 - creates a K8s deployment of 2 pods from AWS ECR-stored image;
 - creates K8s HorizontalPodAutoscaler & LoadBalancer services;
@@ -20,7 +20,7 @@ The Jenkins pipeline:
 
 The Terraform project:
 - stores .tfstate file in AWS S3 Bucket;
-- creates docker image from Dockerfile in CI/CD  Git repository;
+- creates docker image from dockerfile in the CI/CD  Git repository;
 - pushes the docker image into AWS ECR;
 - creates in AWS: VPC, IAM roles, EKS Cluster with 1 node;
 - destroy everything he created when asked.
