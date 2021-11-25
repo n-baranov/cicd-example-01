@@ -40,13 +40,13 @@ node {
      }
 
      stage('03-Build-Project') {
-       sh "mkdir -p cicd-example-01/docker/build"
-       sh "docker build -f cicd-example-01/docker/backend.dockerfile cicd-example-01/docker/build"
+       dir ('cicd-example-01/docker') {
+         sh "mkdir build"
+         sh "docker build -f backend.dockerfile build"
      }
 
      stage('04-Create-Infrastructure') {
        dir ('cicd-example-01/terraform') {
-         sh "pwd"
          sh "terraform init"
 //         sh "terraform apply --auto-approve"
        }
@@ -93,7 +93,8 @@ node {
      }
 
      stage('07-Destroy-Infrastructure') {
-       sh """cd cicd-example-01/terraform/ && terraform destroy --auto-approve"""
+       sh "cd cicd-example-01/terraform/ && terraform destroy --auto-approve"
+       sh "sudo docker rm -f $(sudo docker ps -a -q)"
      }
 */
    }
