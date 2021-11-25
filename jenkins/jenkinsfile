@@ -42,7 +42,7 @@ node {
      stage('03-Build-Project') {
        dir ('cicd-example-01/docker') {
          sh "mkdir build"
-         sh "docker build -t php-laravel:latest -f backend.dockerfile -"
+         sh "docker build -t php-laravel:latest -f backend.dockerfile build"
        }
      }
 
