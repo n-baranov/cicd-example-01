@@ -35,7 +35,8 @@ node {
 
      stage('02-Pull-Project-from-GitHub') {
        sh "if [ -d cicd-example-01 ]; then rm -Rf cicd-example-01; fi"
-       sh "git clone https://github.com/n-baranov/cicd-example-01.git"
+       sh "git clone --branch refactoring https://github.com/n-baranov/cicd-example-01.git"
+//       sh "git clone https://github.com/n-baranov/cicd-example-01.git"       
      }
 
      stage('03-Create-Infrastructure') {
