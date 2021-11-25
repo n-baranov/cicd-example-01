@@ -39,7 +39,7 @@ node {
      }
 
      stage('03-Create-Infrastructure') {
-       dir ('cicd-example-01/terraform') {
+       dir ('./cicd-example-01/terraform/') {
          sh "terraform init"
 //         sh "terraform apply --auto-approve"
        }
