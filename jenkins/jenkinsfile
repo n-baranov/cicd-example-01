@@ -36,11 +36,15 @@ node {
      stage('02-Pull-Project-from-GitHub') {
        sh "if [ -d cicd-example-01 ]; then rm -Rf cicd-example-01; fi"
        sh "git clone --branch refactoring https://github.com/n-baranov/cicd-example-01.git"
-//       sh "git clone https://github.com/n-baranov/cicd-example-01.git"       
+//       sh "git clone https://github.com/n-baranov/cicd-example-01.git"
      }
 
-     stage('03-Create-Infrastructure') {
-       dir ('./cicd-example-01/terraform/') {
+     stage('03-Build-Project') {
+       sh "docker build -f docker/backend.dockerfile docker/build"
+     }
+
+     stage('04-Create-Infrastructure') {
+       dir ('cicd-example-01/terraform') {
          sh "pwd"
          sh "terraform init"
 //         sh "terraform apply --auto-approve"
@@ -49,7 +53,7 @@ node {
 
 /*
 
-     stage('04-Kubernetes-Deployment') {
+     stage('05-Kubernetes-Deployment') {
        sh "aws eks --region eu-west-3 update-kubeconfig --name eks_cluster_laravel"
        sh "kubectl apply -f cicd-example-01/kubernetes/manifest.yaml"
      }
