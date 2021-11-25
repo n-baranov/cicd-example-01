@@ -10,7 +10,7 @@ node {
        {
 //    stages {
 		stage ('00-Checkout') {
-      steps {
+  //    steps {
         checkout([$class: 'GitSCM',
         branches: [[name: '**']],
         doGenerateSubmoduleConfigurations: false,
@@ -18,10 +18,10 @@ node {
         submoduleCfg: [],
         userRemoteConfigs: [[credentialsId: 'jenkins-git',
         url: 'git@github.com:n-baranov/copy-laravel-project-master.git']]])
-      }
+//      }
     }
     stage('01-Create-S3-Bucket') {
-      steps {
+/*      steps {
         withCredentials([[
           $class: 'AmazonWebServicesCredentialsBinding',
           accessKeyVariable: 'AWS_ACCESS_KEY_ID',
@@ -29,6 +29,7 @@ node {
           credentialsId: 'jenkins-AWS'
           ]])
           {
+  */
             sh """
             export S3_BUCKET_NAME=laravel-tfstate-bucket
             cat <<EOF> script.sh
@@ -42,12 +43,12 @@ node {
              fi
             """
             sh """bash script.sh"""
-          }
+      //    }
 
-        }
+    //    }
       }
       stage('02-Pull-Project-from-GitHub') {
-        steps {
+  /*      steps {
           withCredentials([[
             $class: 'AmazonWebServicesCredentialsBinding',
             accessKeyVariable: 'AWS_ACCESS_KEY_ID',
@@ -55,11 +56,12 @@ node {
             credentialsId: 'jenkins-AWS'
             ]])
             {
+            */
               sh "if [ -d cicd-example-01 ]; then rm -Rf cicd-example-01; fi"
               sh "git clone https://github.com/n-baranov/cicd-example-01.git"
-            }
+        //    }
 
-          }
+        //  }
         }
 
         /*
