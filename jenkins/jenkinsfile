@@ -30,7 +30,7 @@ node {
        exit
        fi
        """
-       sh """bash script.sh"""
+       sh "bash script.sh"
      }
 
      stage('02-Pull-Project-from-GitHub') {
@@ -83,6 +83,6 @@ node {
      stage('07-Destroy-Infrastructure') {
        sh """cd cicd-example-01/terraform/ && terraform destroy --auto-approve"""
      }
+*/
    }
  }
-*/
