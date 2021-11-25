@@ -40,8 +40,8 @@ node {
      }
 
      stage('03-Build-Project') {
-       sh "mkdir -p docker/build"
-       sh "docker build -f docker/backend.dockerfile docker/build"
+       sh "mkdir -p cicd-example-01/docker/build"
+       sh "docker build -f cicd-example-01/docker/backend.dockerfile cicd-example-01/docker/build"
      }
 
      stage('04-Create-Infrastructure') {
