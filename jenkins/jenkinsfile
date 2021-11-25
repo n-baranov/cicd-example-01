@@ -2,9 +2,21 @@ pipeline {
     agent any
 
     stages {
+      withCredentials([[
+        $class: 'AmazonWebServicesCredentialsBinding',
+        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
+        credentialsId: 'jenkins-AWS'
+        ]])
 		stage ('00-Checkout') {
       steps {
-        checkout([$class: 'GitSCM', branches: [[name: '**']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'jenkins-git', url: 'git@github.com:n-baranov/copy-laravel-project-master.git']]])
+        checkout([$class: 'GitSCM',
+        branches: [[name: '**']],
+        doGenerateSubmoduleConfigurations: false,
+        extensions: [],
+        submoduleCfg: [],
+        userRemoteConfigs: [[credentialsId: 'jenkins-git',
+        url: 'git@github.com:n-baranov/copy-laravel-project-master.git']]])
       }
     }
     stage('01-Create-S3-Bucket') {
@@ -42,12 +54,14 @@ pipeline {
             credentialsId: 'jenkins-AWS'
             ]])
             {
-              sh """if [ -d cicd-example-01 ]; then rm -Rf cicd-example-01; fi"""
-              sh """git clone https://github.com/n-baranov/cicd-example-01.git"""
+              sh "if [ -d cicd-example-01 ]; then rm -Rf cicd-example-01; fi"
+              sh "git clone https://github.com/n-baranov/cicd-example-01.git"
             }
 
           }
         }
+
+        /*
         stage('03-Create-Infrastructure') {
           steps {
             withCredentials([[
@@ -57,10 +71,10 @@ pipeline {
               credentialsId: 'jenkins-AWS'
               ]])
               {
-                sh """cd cicd-example-01/ && terraform init"""
-                sh """cd cicd-example-01/ && terraform apply --auto-approve"""
+                sh """cd cicd-example-01/terraform/ && terraform init"""
+                sh """cd cicd-example-01/terraform/ && terraform apply --auto-approve"""
                 sh """aws eks --region eu-west-3 update-kubeconfig --name eks_cluster_laravel"""
-                sh """kubectl apply -f cicd-example-01/manifest.yaml"""
+                sh """kubectl apply -f cicd-example-01/kubernetes/manifest.yaml"""
               }
             }
           }
@@ -115,7 +129,7 @@ pipeline {
                 ]])
                 {
                   sh """aws eks --region eu-west-3 update-kubeconfig --name eks_cluster_laravel"""
-                  sh """cd cicd-example-01/ && kubectl delete -f manifest.yaml"""
+                  sh """cd cicd-example-01/kubernetes/ && kubectl delete -f manifest.yaml"""
                 }
 
               }
@@ -129,10 +143,11 @@ pipeline {
                   credentialsId: 'jenkins-AWS'
                   ]])
                   {
-                    sh """cd cicd-example-01/ && terraform destroy --auto-approve"""
-                  }
+                    sh """cd cicd-example-01/terraform/ && terraform destroy --auto-approve"""
+                 }
 
                 }
               }
+              */
     }
   }
