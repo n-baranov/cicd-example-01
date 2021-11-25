@@ -43,6 +43,7 @@ node {
        dir ('cicd-example-01/docker') {
          sh "mkdir build"
          sh "docker build -f backend.dockerfile build"
+       }
      }
 
      stage('04-Create-Infrastructure') {
