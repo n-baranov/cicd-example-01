@@ -4,11 +4,11 @@ ENV TZ=Europe/Moscow
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get -y update \
-    apache2 \
-    git \
-    composer \
-    php \
-    php-xml
+    apt-get -y install apache2 \
+    apt-get -y install git \
+    apt-get -y install composer \
+    apt-get -y install php \
+    apt-get -y install php-xml
 
 RUN rm -R /var/www/html/
 RUN git clone https://github.com/n-baranov/copy-laravel-project-master.git /var/www/html
