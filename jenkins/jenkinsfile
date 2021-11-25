@@ -38,13 +38,18 @@ node {
        sh "git clone https://github.com/n-baranov/cicd-example-01.git"
      }
 
+     stage('03-Create-Infrastructure') {
+       dir ('cicd-example-01/terraform') {
+         sh "terraform init"
+//         sh "terraform apply --auto-approve"
+       }
+     }
+
 /*
 
-     stage('03-Create-Infrastructure') {
-       sh """cd cicd-example-01/terraform/ && terraform init"""
-       sh """cd cicd-example-01/terraform/ && terraform apply --auto-approve"""
-       sh """aws eks --region eu-west-3 update-kubeconfig --name eks_cluster_laravel"""
-       sh """kubectl apply -f cicd-example-01/kubernetes/manifest.yaml"""
+     stage('04-Kubernetes-Deployment') {
+       sh "aws eks --region eu-west-3 update-kubeconfig --name eks_cluster_laravel"
+       sh "kubectl apply -f cicd-example-01/kubernetes/manifest.yaml"
      }
 
      stage('04-Healthcheck') {
