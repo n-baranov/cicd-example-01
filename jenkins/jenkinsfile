@@ -1,9 +1,9 @@
 node {
-    withEnv([
-      'REGION=eu-west-3'
-      ])
-
-      {
+  withEnv([
+    'REGION=eu-west-3',
+    'S3_BUCKET_NAME=laravel-tfstate-bucket'
+    ])
+    {
 
     withCredentials([[
       $class: 'AmazonWebServicesCredentialsBinding',
@@ -11,8 +11,8 @@ node {
       secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
       credentialsId: 'jenkins-AWS'
       ]])
+      {
 
-    {
       stage ('00-Checkout') {
         checkout([$class: 'GitSCM',
         branches: [[name: '**']],
@@ -25,87 +25,86 @@ node {
 
       stage('01-Create-S3-Bucket') {
         sh """
-        export S3_BUCKET_NAME=laravel-tfstate-bucket
         cat <<EOF> script.sh
         #!/bin/bash
-        if aws s3 ls "s3://%S3_BUCKET_NAME%" 2>&1 | grep -q 'NoSuchBucket'
+        if aws s3 ls "s3://${env.S3_BUCKET_NAME}" 2>&1 | grep -q 'NoSuchBucket'
         then
-          echo "Bucket %S3_BUCKET_NAME% doesn't exist. Creating it..."
-          aws s3 mb s3://%S3_BUCKET_NAME% --region=${env.REGION}
-       sleep 5
-       exit
-       fi
-       """
-       sh "bash script.sh"
-     }
+          echo "Bucket ${env.S3_BUCKET_NAME} doesn't exist. Creating it..."
+          aws s3 mb s3://${env.S3_BUCKET_NAME} --region=${env.REGION}
+        sleep 5
+        exit
+        fi
+        """
+        sh "bash script.sh"
+      }
 
-     stage('02-Pull-Project-from-GitHub') {
-       sh "if [ -d cicd-example-01 ]; then rm -Rf cicd-example-01; fi"
-       sh "git clone --branch refactoring https://github.com/n-baranov/cicd-example-01.git"
+      stage('02-Pull-Project-from-GitHub') {
+        sh "if [ -d cicd-example-01 ]; then rm -Rf cicd-example-01; fi"
+        sh "git clone --branch refactoring https://github.com/n-baranov/cicd-example-01.git"
 //       sh "git clone https://github.com/n-baranov/cicd-example-01.git"
-     }
+      }
 
-     stage('03-Build-Project') {
-       dir ('cicd-example-01/docker') {
-         sh """
-         export AccountId=`aws sts get-caller-identity --query Account --output text`
-         aws ecr get-login-password --region ${env.REGION} | docker login --username AWS --password-stdin \$AccountId.dkr.ecr.${env.REGION}.amazonaws.com
-         bash bin/build.sh . \$AccountId.dkr.ecr.${env.REGION}.amazonaws.com/php-laravel:latest backend.dockerfile ${env.REGION}
-         """
-       }
-     }
+      stage('03-Build-And-Push') {
+        dir ('cicd-example-01/docker') {
+          sh """
+          export AccountId=`aws sts get-caller-identity --query Account --output text`
+          aws ecr get-login-password --region ${env.REGION} | docker login --username AWS --password-stdin \$AccountId.dkr.ecr.${env.REGION}.amazonaws.com
+          bash bin/build.sh . \$AccountId.dkr.ecr.${env.REGION}.amazonaws.com/php-laravel:latest backend.dockerfile ${env.REGION}
+          """
+        }
+      }
 
-     stage('04-Create-Infrastructure') {
-       dir ('cicd-example-01/terraform') {
-         sh "terraform init"
-//         sh "terraform apply --auto-approve"
-       }
-     }
+      stage('04-Create-Infrastructure') {
+        dir ('cicd-example-01/terraform') {
+          sh "terraform init"
+//          sh "terraform apply --auto-approve"
+        }
+      }
 
 /*
-     stage('05-Kubernetes-Deployment') {
-       sh "aws eks --region ${env.REGION} update-kubeconfig --name eks_cluster_laravel"
-       sh "kubectl apply -f cicd-example-01/kubernetes/manifest.yaml"
-     }
+      stage('05-Kubernetes-Deployment') {
+        sh "aws eks --region ${env.REGION} update-kubeconfig --name eks_cluster_laravel"
+        sh "kubectl apply -f cicd-example-01/kubernetes/manifest.yaml"
+      }
 
-     stage('04-Healthcheck') {
-       sleep 120
-       sh """aws eks --region ${env.REGION} update-kubeconfig --name eks_cluster_laravel"""
-       sh """export LARAVEL_ENDPOINT=`kubectl get services laravel-lb --output jsonpath='{.status.loadBalancer.ingress[0].hostname}'`
-       cat <<EOF> healthcheck.sh
-       #!/bin/bash
-       if curl \$LARAVEL_ENDPOINT 2>&1 | grep -q 'Laravel'
-       then
-          echo "-------------------- This deployment is ok --------------------"
-       else
-          echo "-------------------- Something's wrong. This deployment is not ok --------------------"
-       exit
-       fi
-       """
-       sh """bash healthcheck.sh"""
-     }
+      stage('04-Healthcheck') {
+        sleep 120
+        sh """aws eks --region ${env.REGION} update-kubeconfig --name eks_cluster_laravel"""
+        sh """export LARAVEL_ENDPOINT=`kubectl get services laravel-lb --output jsonpath='{.status.loadBalancer.ingress[0].hostname}'`
+        cat <<EOF> healthcheck.sh
+        #!/bin/bash
+        if curl \$LARAVEL_ENDPOINT 2>&1 | grep -q 'Laravel'
+        then
+           echo "-------------------- This deployment is ok --------------------"
+        else
+           echo "-------------------- Something's wrong. This deployment is not ok --------------------"
+        exit
+        fi
+        """
+        sh """bash healthcheck.sh"""
+      }
 
-     stage('05-2-minutes-hold') {
-       echo "------------ Destruction will be started in 120 seconds ------------"
-       sleep 1
-       script {
-         for (int i = 119; i > 0; i--) {
-           echo "${i}"
-           sh """sleep 1 1>&1"""
-         }
-       }
-     }
+      stage('05-2-minutes-hold') {
+        echo "------------ Destruction will be started in 120 seconds ------------"
+        sleep 1
+        script {
+          for (int i = 119; i > 0; i--) {
+            echo "${i}"
+            sh """sleep 1 1>&1"""
+          }
+        }
+      }
 
-     stage('06-Login-And-Delete-K8s-Deployment-HPA-LB') {
-       sh """aws eks --region ${env.REGION} update-kubeconfig --name eks_cluster_laravel"""
-       sh """cd cicd-example-01/kubernetes/ && kubectl delete -f manifest.yaml"""
-     }
+      stage('06-Login-And-Delete-K8s-Deployment-HPA-LB') {
+        sh """aws eks --region ${env.REGION} update-kubeconfig --name eks_cluster_laravel"""
+        sh """cd cicd-example-01/kubernetes/ && kubectl delete -f manifest.yaml"""
+      }
 
-     stage('07-Destroy-Infrastructure') {
-       sh "cd cicd-example-01/terraform/ && terraform destroy --auto-approve"
-       sh "sudo docker rm -f \$(sudo docker ps -a -q)"
-     }
+      stage('07-Destroy-Infrastructure') {
+        sh "cd cicd-example-01/terraform/ && terraform destroy --auto-approve"
+        sh "sudo docker rm -f \$(sudo docker ps -a -q)"
+      }
 */
+     }
+    }
 }
-   }
- }
