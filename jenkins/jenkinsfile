@@ -42,8 +42,10 @@ node {
      stage('03-Build-Project') {
        dir ('cicd-example-01/docker') {
     //     sh "docker build -t php-laravel:latest -f backend.dockerfile build"
-         sh "EXPORT $AccountId = `aws sts get-caller-identity --query Account --output text`"
-         sh """bash bin/build.sh . \${AccountId}.dkr.ecr.\${region}.amazonaws.com/php-laravel:latest backend.dockerfile"""
+         sh """
+         EXPORT $AccountId = `aws sts get-caller-identity --query Account --output text`
+         bash bin/build.sh . \${AccountId}.dkr.ecr.\${region}.amazonaws.com/php-laravel:latest backend.dockerfile
+         """
        }
      }
 
