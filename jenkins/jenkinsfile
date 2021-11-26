@@ -10,11 +10,10 @@ node {
     credentialsId: 'jenkins-AWS'
     ]])
 
-    parameters {
-        string (name: 'REGION', defaultValue: 'eu-west-3', description: 'AWS Region')
-    }
-
     {
+      parameters {
+          string (name: 'REGION', defaultValue: 'eu-west-3', description: 'AWS Region')
+      }
 
       stage ('00-Checkout') {
         checkout([$class: 'GitSCM',
