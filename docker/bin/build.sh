@@ -26,7 +26,7 @@ $(aws ecr get-login --no-include-email) || { echo 'ERROR: aws ecr login failed' 
 which docker > /dev/null && docker ps > /dev/null || { echo 'ERROR: docker is not running' ; exit 1; }
 
 # Build image
-docker build -t $aws_ecr_repository_url_with_tag -f $dockerfile_name $build_folder .
+docker build -t $aws_ecr_repository_url_with_tag -f $dockerfile_name $build_folder
 
 # Push image
 docker push $aws_ecr_repository_url_with_tag
