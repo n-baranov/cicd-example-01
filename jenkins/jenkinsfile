@@ -44,6 +44,7 @@ node {
     //     sh "docker build -t php-laravel:latest -f backend.dockerfile build"
          sh """
          export AccountId=`aws sts get-caller-identity --query Account --output text`
+         aws ecr get-login-password --region \$region | docker login --username AWS --password-stdin \$AccountId.dkr.ecr.\$region.amazonaws.com
          bash bin/build.sh . \$AccountId.dkr.ecr.\$region.amazonaws.com/php-laravel:latest backend.dockerfile
          """
        }
@@ -89,7 +90,7 @@ node {
          }
        }
      }
-*/
+
      stage('06-Login-And-Delete-K8s-Deployment-HPA-LB') {
        sh """aws eks --region eu-west-3 update-kubeconfig --name eks_cluster_laravel"""
        sh """cd cicd-example-01/kubernetes/ && kubectl delete -f manifest.yaml"""
@@ -99,6 +100,6 @@ node {
        sh "cd cicd-example-01/terraform/ && terraform destroy --auto-approve"
        sh "sudo docker rm -f \$(sudo docker ps -a -q)"
      }
-
+*/
    }
  }
