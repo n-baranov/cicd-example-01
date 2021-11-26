@@ -1,3 +1,7 @@
+environment {
+    REGION = 'eu-west-3'
+}
+
 node {
   withCredentials([[
     $class: 'AmazonWebServicesCredentialsBinding',
@@ -5,10 +9,6 @@ node {
     secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
     credentialsId: 'jenkins-AWS'
     ]])
-
-    environment {
-        REGION = 'eu-west-3'
-    }
 
     {
 
