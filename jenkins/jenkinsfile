@@ -1,7 +1,7 @@
 node {
     properties([
-      parameters ([
-          string (name: 'REGION', defaultValue: 'eu-west-3', description: "AWS Region")
+      environment ([
+          REGION = 'eu-west-3'
       ])
     ])
 
