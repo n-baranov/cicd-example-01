@@ -96,7 +96,7 @@ node {
         dir ('cicd-example-01/terraform') {
           sh """
           terraform destroy --auto-approve
-          if  [ $(docker ps -a -q) ]; then docker rm -f \$(docker ps -a -q); fi
+          if  [ \$(docker ps -a -q) ]; then docker rm -f \$(docker ps -a -q); fi
           docker image prune -a -f
           """
         }
