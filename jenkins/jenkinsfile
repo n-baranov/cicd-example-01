@@ -1,4 +1,4 @@
-environment {
+parameters {
     REGION = 'eu-west-3'
 }
 
