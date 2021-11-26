@@ -1,6 +1,6 @@
 node {
     withEnv([
-      'REGION = eu-west-3'
+      'REGION=eu-west-3'
       ])
 
       {
