@@ -48,8 +48,8 @@ node {
        dir ('cicd-example-01/docker') {
          sh """
          export AccountId=`aws sts get-caller-identity --query Account --output text`
-         aws ecr get-login-password --region \${env.REGION} | docker login --username AWS --password-stdin \$AccountId.dkr.ecr.\${env.REGION}.amazonaws.com
-         bash bin/build.sh . \$AccountId.dkr.ecr.\$region.amazonaws.com/php-laravel:latest backend.dockerfile
+         aws ecr get-login-password --region ${env.REGION} | docker login --username AWS --password-stdin \$AccountId.dkr.ecr.${env.REGION}.amazonaws.com
+         bash bin/build.sh . \$AccountId.dkr.ecr.${env.REGION}.amazonaws.com/php-laravel:latest backend.dockerfile
          """
        }
      }
