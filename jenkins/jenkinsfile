@@ -23,16 +23,16 @@ node {
         url: 'git@github.com:n-baranov/copy-laravel-project-master.git']]])
       }
 
-      stage('01-Create-S3-Bucket') {
-        dir ('cicd-example-01/terraform/bin') {
-          sh "bash s3bucket.sh ${env.S3_BUCKET_NAME} ${env.REGION}"
-        }
-      }
-
-      stage('02-Pull-Project-from-GitHub') {
+      stage('01-Pull-Project-from-GitHub') {
         sh "if [ -d cicd-example-01 ]; then rm -Rf cicd-example-01; fi"
         sh "git clone --branch refactoring https://github.com/n-baranov/cicd-example-01.git"
 //       sh "git clone https://github.com/n-baranov/cicd-example-01.git"
+      }
+
+      stage('02-Create-S3-Bucket') {
+        dir ('cicd-example-01/terraform/bin') {
+          sh "bash s3bucket.sh ${env.S3_BUCKET_NAME} ${env.REGION}"
+        }
       }
 
       stage('03-Build-And-Push') {
