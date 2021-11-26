@@ -2,13 +2,13 @@ provider "aws" {
   region = var.region
 }
 
-provider "docker" {
-  registry_auth {
-    address  = local.aws_ecr_url
-    username = data.aws_ecr_authorization_token.current.user_name
-    password = data.aws_ecr_authorization_token.current.password
-  }
-}
+# provider "docker" {
+#   registry_auth {
+#     address  = local.aws_ecr_url
+#     username = data.aws_ecr_authorization_token.current.user_name
+#     password = data.aws_ecr_authorization_token.current.password
+#   }
+# }
 
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint

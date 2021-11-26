@@ -3,10 +3,10 @@ variable "region" {
   default = "eu-west-3"
 }
 
-variable "repository_list" {
-  type    = list(any)
-  default = ["backend"]
-}
+# variable "repository_list" {
+#   type    = list(any)
+#   default = ["backend"]
+# }
 
 variable "vpc_name" {
   default = "Dev"
