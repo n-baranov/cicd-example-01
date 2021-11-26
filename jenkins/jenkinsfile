@@ -41,8 +41,9 @@ node {
 
      stage('03-Build-Project') {
        dir ('cicd-example-01/docker') {
-         sh "mkdir build"
-         sh "docker build -t php-laravel:latest -f backend.dockerfile build"
+    //     sh "docker build -t php-laravel:latest -f backend.dockerfile build"
+         sh "EXPORT $AccountId = `aws sts get-caller-identity --query Account --output text`"
+         sh ""bash bin/build.sh . ${AccountId}.dkr.ecr.${region}.amazonaws.com/php-laravel:latest backend.dockerfile""
        }
      }
 
@@ -54,7 +55,6 @@ node {
      }
 
 /*
-
      stage('05-Kubernetes-Deployment') {
        sh "aws eks --region eu-west-3 update-kubeconfig --name eks_cluster_laravel"
        sh "kubectl apply -f cicd-example-01/kubernetes/manifest.yaml"

@@ -9,10 +9,10 @@ resource "docker_registry_image" "docker_image" {
   for_each = toset(var.repository_list)
   name     = "${aws_ecr_repository.repository[each.key].repository_url}:latest"
 
-  build {
-    context    = "docker/"
-    dockerfile = "${each.key}.dockerfile"
-  }
+  #  build {
+  #    context    = "docker/"
+  #    dockerfile = "${each.key}.dockerfile"
+  #  }
 }
 
 #create VPC with subnets
