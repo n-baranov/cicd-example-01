@@ -49,10 +49,10 @@ node {
       stage('04-Create-Infrastructure') {
         dir ('cicd-example-01/terraform') {
           sh "terraform init"
-          sh "terraform apply --auto-approve"
+//          sh "terraform apply --auto-approve"
         }
       }
-
+/*
       stage('05-Kubernetes-Deployment') {
         dir ('cicd-example-01/kubernetes') {
           sh """
@@ -62,7 +62,7 @@ node {
         }
       }
 
-      stage('04-Healthcheck') {
+      stage('06-Healthcheck') {
         sh """
         aws eks --region ${env.REGION} update-kubeconfig --name ${env.EKS_CLUSTER_NAME}
         bash cicd-example-01/kubernetes/bin/endpointwaiting.sh
@@ -71,7 +71,7 @@ node {
         """
       }
 
-      stage('05-2-minutes-hold') {
+      stage('07-2-minutes-hold') {
         echo "------------ Destruction will be started in 120 seconds ------------"
         sleep 1
         script {
@@ -82,7 +82,7 @@ node {
         }
       }
 
-      stage('06-Login-And-Delete-K8s-Deployment-HPA-LB') {
+      stage('08-Delete-K8s-Deployment-HPA-LB') {
         dir ('cicd-example-01/kubernetes') {
           sh """
           aws eks --region ${env.REGION} update-kubeconfig --name ${env.EKS_CLUSTER_NAME}
@@ -90,13 +90,13 @@ node {
           """
         }
       }
-
-      stage('07-Destroy-Infrastructure') {
+*/
+      stage('09-Destroy-Infrastructure') {
         dir ('cicd-example-01/terraform') {
           sh """
           terraform destroy --auto-approve
-          sudo docker rm -f \$(sudo docker ps -a -q)
-          sudo docker image prune -a -f
+          docker rm -f \$(docker ps -a -q)
+          docker image prune -a -f
           """
         }
       }
