@@ -7,13 +7,14 @@ set -e
 build_folder=$1
 aws_ecr_repository_url_with_tag=$2
 dockerfile_name=$3
+region=$4
 
 if ( ! aws ecr describe-repositories | grep php-laravel )
 then
    aws ecr create-repository \
    --repository-name php-laravel \
    --image-scanning-configuration scanOnPush=true \
-   --region ${region}
+   --region $region
 fi
 
 # Check if aws is installed
