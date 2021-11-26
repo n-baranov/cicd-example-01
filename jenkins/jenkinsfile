@@ -1,9 +1,7 @@
 node {
-    properties([
       environment ([
           REGION = 'eu-west-3'
       ])
-    ])
 
     withCredentials([[
       $class: 'AmazonWebServicesCredentialsBinding',
