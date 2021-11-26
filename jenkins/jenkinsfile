@@ -95,7 +95,7 @@ node {
 
      stage('07-Destroy-Infrastructure') {
        sh "cd cicd-example-01/terraform/ && terraform destroy --auto-approve"
-       sh """sudo docker rm -f $(sudo docker ps -a -q)"""
+       sh "sudo docker rm -f \$(sudo docker ps -a -q)"
      }
 
    }
