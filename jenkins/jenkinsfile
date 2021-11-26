@@ -87,7 +87,7 @@ node {
          }
        }
      }
-
+*/
      stage('06-Login-And-Delete-K8s-Deployment-HPA-LB') {
        sh """aws eks --region eu-west-3 update-kubeconfig --name eks_cluster_laravel"""
        sh """cd cicd-example-01/kubernetes/ && kubectl delete -f manifest.yaml"""
@@ -97,6 +97,6 @@ node {
        sh "cd cicd-example-01/terraform/ && terraform destroy --auto-approve"
        sh "sudo docker rm -f $(sudo docker ps -a -q)"
      }
-*/
+
    }
  }
