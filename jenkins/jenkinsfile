@@ -24,7 +24,7 @@ node {
       }
 
       stage('01-Create-S3-Bucket') {
-        sh "bash terraform/s3bucket.sh ${env.S3_BUCKET_NAME} ${env.REGION}"
+        sh "bash terraform/bin/s3bucket.sh ${env.S3_BUCKET_NAME} ${env.REGION}"
       }
 
       stage('02-Pull-Project-from-GitHub') {
