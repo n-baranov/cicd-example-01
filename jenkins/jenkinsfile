@@ -1,16 +1,16 @@
 node {
-  withCredentials([[
-    $class: 'AmazonWebServicesCredentialsBinding',
-    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
-    credentialsId: 'jenkins-AWS'
-    ]])
-
     properties([
       parameters ([
           string (name: 'REGION', defaultValue: 'eu-west-3', description: 'AWS Region')
       ])
     ])
+
+    withCredentials([[
+      $class: 'AmazonWebServicesCredentialsBinding',
+      accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+      secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
+      credentialsId: 'jenkins-AWS'
+      ]])
 
     {
       stage ('00-Checkout') {
