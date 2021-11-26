@@ -52,7 +52,7 @@ node {
 //          sh "terraform apply --auto-approve"
         }
       }
-/*
+
       stage('05-Kubernetes-Deployment') {
         dir ('cicd-example-01/kubernetes') {
           sh """
@@ -90,7 +90,7 @@ node {
           """
         }
       }
-*/
+
       stage('09-Destroy-Infrastructure') {
         dir ('cicd-example-01/terraform') {
           sh """
