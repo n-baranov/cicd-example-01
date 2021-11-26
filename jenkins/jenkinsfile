@@ -1,7 +1,3 @@
-parameters {
-    string (name: 'REGION', defaultValue: 'eu-west-3', description: 'AWS Region')
-}
-
 node {
   withCredentials([[
     $class: 'AmazonWebServicesCredentialsBinding',
@@ -10,11 +6,13 @@ node {
     credentialsId: 'jenkins-AWS'
     ]])
 
-    {
-      parameters {
+    properties([
+      parameters ([
           string (name: 'REGION', defaultValue: 'eu-west-3', description: 'AWS Region')
-      }
+      ])
+    ])
 
+    {
       stage ('00-Checkout') {
         checkout([$class: 'GitSCM',
         branches: [[name: '**']],
