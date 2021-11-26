@@ -24,18 +24,7 @@ node {
       }
 
       stage('01-Create-S3-Bucket') {
-        sh """
-        cat <<EOF> script.sh
-        #!/bin/bash
-        if aws s3 ls "s3://${env.S3_BUCKET_NAME}" 2>&1 | grep -q 'NoSuchBucket'
-        then
-          echo "Bucket ${env.S3_BUCKET_NAME} doesn't exist. Creating it..."
-          aws s3 mb s3://${env.S3_BUCKET_NAME} --region=${env.REGION}
-        sleep 5
-        exit
-        fi
-        """
-        sh "bash script.sh"
+        sh "bash terraform/script.sh ${env.S3_BUCKET_NAME} ${env.REGION}"
       }
 
       stage('02-Pull-Project-from-GitHub') {
