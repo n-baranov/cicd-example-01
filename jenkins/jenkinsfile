@@ -5,6 +5,11 @@ node {
     secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
     credentialsId: 'jenkins-AWS'
     ]])
+
+    environment {
+        REGION = 'eu-west-3'
+    }
+
     {
 
       stage ('00-Checkout') {
@@ -41,11 +46,9 @@ node {
 
      stage('03-Build-Project') {
        dir ('cicd-example-01/docker') {
-    //     sh "docker build -t php-laravel:latest -f backend.dockerfile build"
          sh """
-         export region=eu-west-3
          export AccountId=`aws sts get-caller-identity --query Account --output text`
-         aws ecr get-login-password --region \$region | docker login --username AWS --password-stdin \$AccountId.dkr.ecr.\$region.amazonaws.com
+         aws ecr get-login-password --region \${env.REGION} | docker login --username AWS --password-stdin \$AccountId.dkr.ecr.\${env.REGION}.amazonaws.com
          bash bin/build.sh . \$AccountId.dkr.ecr.\$region.amazonaws.com/php-laravel:latest backend.dockerfile
          """
        }
