@@ -79,7 +79,7 @@ node {
         }
 
         stage('07-2-minutes-hold') {
-            echo "------------ Destruction will be started in 120 seconds ------------"
+            echo "------------ Destruction will start in 120 seconds ------------"
             sleep 1
             script {
               for (int i = 119; i > 0; i--) {
