@@ -70,46 +70,44 @@ node {
           bash cicd-example-01/kubernetes/bin/endpointwaiting.sh
           export LARAVEL_ENDPOINT=`kubectl get services laravel-lb --output jsonpath='{.status.loadBalancer.ingress[0].hostname}'`
           bash cicd-example-01/healthcheck/healthcheck.sh \$LARAVEL_ENDPOINT
-          exit
+          echo $?
+          exit $?
           """
         }
         catch(Exception error) {
           return
         }
+
+        stage('07-2-minutes-hold') {
+            echo "------------ Destruction will be started in 120 seconds ------------"
+            sleep 1
+            script {
+              for (int i = 119; i > 0; i--) {
+                echo "${i}"
+                sleep 1
+              }
+            }
+          }
       }
 
-      stage('07-2-minutes-hold') {
-          echo "------------ Destruction will be started in 120 seconds ------------"
-          sleep 1
-          script {
-            for (int i = 119; i > 0; i--) {
-              echo "${i}"
-              sleep 1
-            }
-          }
+      stage('08-Delete-K8s-Deployment-HPA-LB') {
+        dir ('cicd-example-01/kubernetes') {
+          sh """
+          aws eks --region ${env.REGION} update-kubeconfig --name ${env.EKS_CLUSTER_NAME}
+          kubectl delete -f manifest.yaml
+          """
         }
+      }
 
-        try {}
-        finally {
-          stage('08-Delete-K8s-Deployment-HPA-LB') {
-            dir ('cicd-example-01/kubernetes') {
-              sh """
-              aws eks --region ${env.REGION} update-kubeconfig --name ${env.EKS_CLUSTER_NAME}
-              kubectl delete -f manifest.yaml
-              """
-            }
-          }
-
-          stage('09-Destroy-Infrastructure') {
-            dir ('cicd-example-01/terraform') {
-              sh """
-              terraform destroy --auto-approve
-              if  [ \$(docker ps -a -q) ]; then docker rm -f \$(docker ps -a -q); fi
-              docker image prune -a -f
-              """
-            }
-          }
+      stage('09-Destroy-Infrastructure') {
+        dir ('cicd-example-01/terraform') {
+          sh """
+          terraform destroy --auto-approve
+          if  [ \$(docker ps -a -q) ]; then docker rm -f \$(docker ps -a -q); fi
+          docker image prune -a -f
+          """
         }
       }
     }
+  }
 }
