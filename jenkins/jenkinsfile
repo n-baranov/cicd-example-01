@@ -70,8 +70,8 @@ node {
           bash cicd-example-01/kubernetes/bin/endpointwaiting.sh
           export LARAVEL_ENDPOINT=`kubectl get services laravel-lb --output jsonpath='{.status.loadBalancer.ingress[0].hostname}'`
           bash cicd-example-01/healthcheck/healthcheck.sh \$LARAVEL_ENDPOINT
-          echo $?
-          exit $?
+          echo \$?
+          exit \$?
           """
         }
         catch(Exception error) {
