@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Fail fast
-set -e
-
 # Arguments
 LARAVEL_ENDPOINT=$1
 
