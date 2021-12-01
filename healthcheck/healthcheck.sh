@@ -7,6 +7,7 @@ Counter=1
 echo "Waiting for the \"200\" response from Laravel. Attempt #$Counter of 60"
 until [ $(curl -LI $LARAVEL_ENDPOINT -o /dev/null -w '%{http_code}\n' -s) == "200" ] || [ $Counter == 60 ]
 do
+  sleep 5
   ((Counter++))
   echo "Waiting for the \"200\" response from Laravel. Attempt #$Counter of 60"
 done
